@@ -39,8 +39,9 @@ export async function PATCH(req: NextRequest) {
 }
 
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
   
   const currentUser = await getCurrentUser();
 
