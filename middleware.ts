@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const roleAccessMap: Record<string, string[]> = {
   superadmin: ["/superadmindashboard", "/upload"],
   admin: ["/upload", "/admin", ],
-  labtester: ["/labtester","/sales" ],
+  labtester: ["/labtester","/upload" ],
   sales: ["/sales","/upload"],
 };
 

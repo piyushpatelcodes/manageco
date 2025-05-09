@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
     const existingDomain = await AuthorizedDomain.findOne({ domain: emailDomain });
 
 
-    console.log("existingDomain: ", existingDomain, emailDomain)
 
     let accountStatus = 'pending';
 

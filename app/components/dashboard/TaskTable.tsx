@@ -2,12 +2,14 @@
 import { apiClient } from "@/lib/api-client";
 import { IReport } from "@/models/Report";
 import { IUser } from "@/models/User";
-import { Edit, Eye, Trash2Icon } from "lucide-react";
+import { Edit, Eye, Trash2Icon, Upload } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import avatar from "../../../public/avatar.jpeg";
 import { usePathname, useRouter } from "next/navigation";
 import { useNotification } from "../Notification";
+import Modal from "../ui/Modal";
+import UploadVerdictForm from "../VerdictUploadForm";
 
 type Person = { name: string; avatar: string };
 type Task = {
@@ -126,23 +128,49 @@ const getUserRole = (): string => {
 };
 
 // Function to generate status options based on the current user's role
-const getStatusOptions = (role: string) => {
+const getStatusOptions = (role: string, status: string) => {
   const capitalRole = role.charAt(0).toUpperCase() + role.slice(1);
 
-  // Define default status options
+  // Initialize an array to store the options
   const statusOptions = [{ label: "Pending", value: "pending" }];
 
-  // Dynamically add options based on the role
+  // Add the current status if it's not already "Pending"
+  if (status && status !== "pending") {
+    statusOptions.push({
+      label: status.charAt(0).toUpperCase() + status.slice(1),
+      value: status,
+    });
+  }
+
+  // Dynamically add options based on the role, but avoid duplicating
   if (role === "labtester") {
-    statusOptions.push(
-      { label: `Reviewed by ${capitalRole}`, value: "reviewed" },
-      { label: `Rejected by ${capitalRole}`, value: "RejectedByLab" }
-    );
-  } else if (role === "admin") {
-    statusOptions.push(
-      { label: `Approved by ${capitalRole}`, value: "approved" },
-      { label: `Rejected by ${capitalRole}`, value: "RejectedByAdmin" }
-    );
+    if (!statusOptions.some((option) => option.value === "reviewed")) {
+      statusOptions.push({
+        label: `Reviewed by ${capitalRole}`,
+        value: "reviewed",
+      });
+    }
+    if (!statusOptions.some((option) => option.value === "RejectedByLab")) {
+      statusOptions.push({
+        label: `Rejected by ${capitalRole}`,
+        value: "RejectedByLab",
+      });
+    }
+  }
+
+  if (role === "admin") {
+    if (!statusOptions.some((option) => option.value === "approved")) {
+      statusOptions.push({
+        label: `Approved by ${capitalRole}`,
+        value: "approved",
+      });
+    }
+    if (!statusOptions.some((option) => option.value === "RejectedByAdmin")) {
+      statusOptions.push({
+        label: `Rejected by ${capitalRole}`,
+        value: "RejectedByAdmin",
+      });
+    }
   }
 
   return statusOptions;
@@ -155,6 +183,17 @@ export default function TaskTable() {
   const pathname = usePathname();
   const { showNotification } = useNotification();
   const [currentUserRole, setCurrentUserRole] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskIdformodal, setTaskIdformodal] = useState<string | null>(null);
+
+  const openModal = (taskId: string) => {
+    setTaskIdformodal(taskId);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTaskIdformodal(null);
+  };
 
   // Fetch the role when the component mounts
   useEffect(() => {
@@ -179,7 +218,17 @@ export default function TaskTable() {
 
     try {
       // Make a PATCH request to update the task status
-      await apiClient.updateStatus({ status: newStatus as "pending" | "reviewed" | "approved" | "RejectedByLab" | "RejectedByAdmin" }, taskId);
+      await apiClient.updateStatus(
+        {
+          status: newStatus as
+            | "pending"
+            | "reviewed"
+            | "approved"
+            | "RejectedByLab"
+            | "RejectedByAdmin",
+        },
+        taskId
+      );
 
       // Update the task status locally
 
@@ -245,7 +294,7 @@ export default function TaskTable() {
     switch (groupBy) {
       case "status":
         return Array.from(new Set(reports.map((t) => t.status))).map(
-          (status) => ({ label: status, value: status })
+          (status) => ({ label: status.toUpperCase(), value: status })
         );
       case "date":
         const dates = reports.map(
@@ -260,15 +309,15 @@ export default function TaskTable() {
           .map((r) => (r.uploadedBy as unknown as IUser)?.email)
           .filter(Boolean);
 
-        return Array.from(new Set(users)).map((email) => ({
-          label: email,
-          value: email,
-        }));
-
-      case "role":
-        const roles = reports
-          .map((r) => (r.uploadedBy as unknown as IUser)?.role)
-          .filter(Boolean);
+          return Array.from(new Set(users)).map((email) => ({
+            label: email,
+            value: email,
+          }));
+          
+          case "role":
+            const roles = reports
+            .map((r) => (r.uploadedBy as unknown as IUser)?.role)
+            .filter(Boolean);
         return Array.from(new Set(roles)).map((role) => ({
           label: role,
           value: role,
@@ -318,6 +367,7 @@ export default function TaskTable() {
         <div key={label}>
           <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900 font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800">
             {groupBy === "status" && label}
+            {groupBy === "role" && label.toUpperCase()}
             {groupBy === "date" && `Date: ${label}`}
             {groupBy === "user" && `User: ${label}`}
             {groupBy === "none" && "All Tasks"}
@@ -342,9 +392,11 @@ export default function TaskTable() {
                   People
                 </th>
                 <th className="p-3 text-left">Status</th>
-                <th className="p-3 text-left border-l border-gray-200 dark:border-gray-700">Actions</th>
+                <th className="p-3 text-left border-l border-gray-200 dark:border-gray-700">
+                  Actions
+                </th>
                 {(currentUserRole === "labtester" ||
-                  currentUserRole === "labtester") && (
+                  currentUserRole === "admin") && (
                   <th className="p-3 text-left">Verdict</th>
                 )}
               </tr>
@@ -428,7 +480,7 @@ export default function TaskTable() {
 
                           return (
                             <div
-                              className="relative tooltip"
+                              className="relative tooltip "
                               data-tip={tooltipContent}
                               key={user._id?.toString()} // Use _id for uniqueness (instead of idx)
                             >
@@ -437,7 +489,7 @@ export default function TaskTable() {
                                 height={34}
                                 src={avatar} // Assuming `avatar` is predefined
                                 alt={email as string} // Use email as alt text for better accessibility
-                                className="rounded-full border-2 border-white dark:border-gray-900 transition-transform transform group-hover:scale-110 ease-in-out duration-200"
+                                className="rounded-full cursor-pointer border-2 border-white  hover:border-purple-500 transition-transform transform group-hover:scale-110  ease-in-out duration-200"
                               />
                             </div>
                           );
@@ -445,7 +497,7 @@ export default function TaskTable() {
                       </div>
                     </td>
 
-                    <td className="w-[11vw] p-3">
+                    <td className="w-[11vw] p-3 gap-2 flex items-center">
                       <span
                         className={`px-2 py-1 rounded ${
                           task.status === "RejectedByLab"
@@ -461,14 +513,48 @@ export default function TaskTable() {
                       >
                         {formatStatus(task.status)}
                       </span>
+                      {task.testResults.length > 0 ? (
+                        <span className="text-green-500 text-sm font-semibold">
+                          {task.testResults.length} Results
+                        </span>
+                      ) : (
+                        <span className="text-yellow-500 text-sm font-semibold opacity-60">
+                          No Results
+                        </span>
+                      )}
                     </td>
                     <td className="w-[9vw] p-3 border-l border-gray-200 dark:border-gray-700">
                       <div className="flex items-center space-x-2">
-                        <Edit
-                          onClick={() => handleEdit(task)}
-                          size={20}
-                          className="hover:text-blue-400 text-gray-400 cursor-pointer transition duration-150 ease-in-out transform active:scale-75"
-                        />
+                        {currentUserRole === "sales" && (
+                          <Edit
+                            onClick={() => handleEdit(task)}
+                            size={20}
+                            className="hover:text-blue-400 text-gray-400 cursor-pointer transition duration-150 ease-in-out transform active:scale-75"
+                          />
+                        )}
+                        {(currentUserRole === "admin" ||
+                          currentUserRole === "labtester") && (
+                          <Upload
+                            onClick={() => {
+                              console.log(
+                                "Opening upload modal for task:",
+                                task
+                              ); // Log the task to verify
+                              openModal(task._id?.toString()); // Pass the correct task._id
+                            }}
+                            size={20}
+                            className="hover:text-blue-400 text-gray-400 cursor-pointer transition duration-150 ease-in-out transform active:scale-75"
+                          />
+                        )}
+                        <Modal isOpen={isModalOpen} closeModal={closeModal}>
+                          <h2 className="text-xl font-semibold mb-4">
+                            Upload Test Result
+                          </h2>
+                          <UploadVerdictForm
+                            reportId={taskIdformodal || undefined}
+                            closeModal={closeModal}
+                          />
+                        </Modal>
 
                         <Eye
                           onClick={() => handleViewDocument(task)}
@@ -483,11 +569,10 @@ export default function TaskTable() {
                           className="hover:text-red-500 text-red-700 cursor-pointer transition duration-150 ease-in-out transform active:scale-75"
                         />
                       </div>
-                      {currentUserRole === "admin"}
                     </td>
 
                     {(currentUserRole === "labtester" ||
-                      currentUserRole === "labtester") && (
+                      currentUserRole === "admin") && (
                       <td className="w-[9vw] p-3">
                         <select
                           className="bg-gray-900 text-white p-2 rounded-md w-full border border-gray-700 focus:outline-none focus:ring focus:ring-blue-500"
@@ -496,11 +581,13 @@ export default function TaskTable() {
                             handleStatusChange(e, task._id?.toString())
                           }
                         >
-                          {getStatusOptions(currentUserRole).map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
+                          {getStatusOptions(currentUserRole, task.status).map(
+                            (option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            )
+                          )}
                         </select>
                       </td>
                     )}

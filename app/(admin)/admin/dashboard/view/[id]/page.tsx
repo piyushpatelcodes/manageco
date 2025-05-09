@@ -35,6 +35,7 @@ export default function ReportViewPage() {
     }
 
     const parsed = JSON.parse(stored);
+    
     setReport(parsed);
   }, [router]);
 

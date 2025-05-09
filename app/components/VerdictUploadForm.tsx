@@ -18,6 +18,7 @@ export default function UploadVerdictForm({
   reportId: string | undefined;
   closeModal: () => void;
 }) {
+  
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { showNotification } = useNotification();
@@ -97,22 +98,20 @@ export default function UploadVerdictForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="form-control">
-        <label className="label">Upload Test Result</label>
+        <label className="label">Please Upload in PDF Format</label>
         <FileUpload
           onSuccess={handleUploadSuccess}
           onProgress={handleUploadProgress}
         />
         {uploadProgress > 0 && (
-          <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+          <div className="w-full bg-gray-800 dark:bg-gray-800 rounded-full h-2.5 mt-2">
             <div
               className="bg-primary h-2.5 rounded-full transition-all duration-300"
               style={{ width: `${uploadProgress}%` }}
             />
           </div>
         )}
-        {errors && (
-          <span className="text-error text-sm mt-1">Error Occured.</span>
-        )}
+        
       </div>
 
       <button

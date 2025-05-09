@@ -50,7 +50,6 @@ export default function ReportComponent({
   isHorizontal = true,
 }: ReportComponentProps) {
   const { data: session } = useSession();
-  console.log("🚀 ~ session:", session);
   const [loading, setloading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

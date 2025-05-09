@@ -5,13 +5,18 @@ import ClientSessionSetter from "../ClientSetter";
 
 export default async function Sidebar() {
   const currentUser = await getCurrentUser();
+  // const menuItems = [
+  //   { name: "All Projects", active: true, badge: 1 },
+  //   { name: "Pending Tasks", badge: 15 },
+  //   { name: `${currentUser.role} Approved Project`, badge: 1 },
+  //   { name: `${currentUser.role} Rejected Project` , badge: 10},
+    
+  // ];
   const menuItems = [
-    { name: "All Projects", active: true, badge: 1 },
-    { name: "Pending Tasks", badge: 15 },
-    { name: `${currentUser.role} Approved Project`, badge: 1 },
-    { name: `${currentUser.role} Rejected Project` , badge: 10},
-    { name: "Angular Studio", badge: 10 },
-    { name: "Cudemo Project", badge: 4 },
+    { name: "All Projects Lists", active: true, url:"/dashboard" },
+    { name: "Kanban Board",url:`/${currentUser.role}/dashboard/kanban` },
+    { name: "Timeline", url:`/${currentUser.role}/dashboard/timeline`},
+    
   ];
   return (
     <aside className="w-64 min-h-screen bg-white dark:bg-[#18181b] border-r border-gray-200 dark:border-gray-800 flex flex-col p-4">
@@ -29,13 +34,13 @@ export default async function Sidebar() {
           {menuItems.map((item) => (
             <li key={item.name} className="mb-2">
               <a
-                href="#"
+                href={item.url}
                 className={`flex items-center p-2 rounded-lg ${item.active ? "bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-medium" : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"}`}
               >
                 {item.name}
-                {item.badge !== 0 && (
+                {/* {item.badge !== 0 && (
                   <span className="ml-2 bg-indigo-200 dark:bg-indigo-800 text-xs px-2 rounded-full text-indigo-700 dark:text-indigo-200">{item.badge}</span>
-                )}
+                )} */}
               </a>
             </li>
           ))}

@@ -68,6 +68,7 @@ export async function GET() {
     const reports = await Report.find(filter)
       .populate("uploadedBy", "email role domain") // Optional: populate uploader
       .populate("sharedWith", "email role") // Optional: populate shared users
+      .populate("testResults.uploadedBy", "email role")
       .sort({ createdAt: -1 })
       .lean();
 
@@ -96,7 +97,6 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!body) {
-      console.log("🚀 ~ POST ~ body:", body)
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }, 

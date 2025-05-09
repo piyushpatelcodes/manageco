@@ -26,6 +26,7 @@ export async function PATCH(req: NextRequest) {
     await connectToDatabase();
 
     const report = await Report.findById(id);
+    console.log("🚀 ~ PATCH ~ id on find:", id)
     if (!report) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
