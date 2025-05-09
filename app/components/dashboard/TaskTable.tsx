@@ -8,7 +8,6 @@ import React, { useEffect, useState } from "react";
 import avatar from "../../../public/avatar.jpeg";
 import { usePathname, useRouter } from "next/navigation";
 import { useNotification } from "../Notification";
-import StatusDropdown from "./StatusDropdown";
 
 type Person = { name: string; avatar: string };
 type Task = {
@@ -180,7 +179,7 @@ export default function TaskTable() {
 
     try {
       // Make a PATCH request to update the task status
-      await apiClient.updateStatus({ status: newStatus }, taskId);
+      await apiClient.updateStatus({ status: newStatus as "pending" | "reviewed" | "approved" | "RejectedByLab" | "RejectedByAdmin" }, taskId);
 
       // Update the task status locally
 

@@ -88,7 +88,7 @@ export default function DocumentUploadForm() {
         return user ? user._id : undefined; // Convert email to ObjectId, or undefined if no user is found
       })
       .filter((id): id is Types.ObjectId => id !== undefined),
-        tags: data?.tags?.map(tag => tag?.trim()) ?? "",
+        tags: Array.isArray(data?.tags) ? data.tags.map(tag => tag.trim()) : [],
       };
   
       // Send the updated data

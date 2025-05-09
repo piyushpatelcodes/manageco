@@ -3,7 +3,7 @@ import { IUser } from "@/models/User";
 import { IVideo } from "@/models/Video";
 
 export type VideoFormData = Omit<IVideo, "_id">;
-export type ReportFormData = Omit<IReport, "uploadedBy" | "isPrivate" | "status">;
+export type ReportFormData = Omit<IReport, "uploadedBy" | "isPrivate">;
 
 type FetchOptions<T = unknown> = {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -49,16 +49,16 @@ class ApiClient {
   async getVideo(id: string) {
     return this.fetch<IVideo>(`/videos/${id}`);
   }
-  async editReport(reportData: ReportFormData, reportId: string,) {
-    return this.fetch<IReport, ReportFormData>(`/report/${reportId}`,{
+  async editReport(reportData: Partial<ReportFormData>, reportId: string,) {
+    return this.fetch<IReport, Partial<ReportFormData>>(`/report/${reportId}`,{
       method: "PATCH",
       body: reportData,
     });
   }
 
 
-  async updateStatus(reportStatus:ReportFormData, reportId: string) {
-    return this.fetch<IReport, ReportFormData>(`/report/${reportId}`,{
+  async updateStatus(reportStatus:Partial<ReportFormData>, reportId: string) {
+    return this.fetch<IReport, Partial<ReportFormData>>(`/report/${reportId}`,{
       method: "PATCH",
       body: reportStatus,
     });

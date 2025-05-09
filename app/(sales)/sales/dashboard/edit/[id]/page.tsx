@@ -188,7 +188,7 @@ export default function SalesEditPage() {
   const onSubmit = async (data: ReportFormData) => {
     setLoading(true);
     const original = originalDataRef.current;
-    const updatedFields: Partial<ReportFormData> = {};
+    const updatedFields: Record<string, unknown> = {};
 
     for (const key in data) {
       const currentVal = data[key as keyof ReportFormData];
@@ -213,13 +213,15 @@ export default function SalesEditPage() {
 
     // Normalize tags
     if (updatedFields.tags) {
-      updatedFields.tags = updatedFields.tags.map((tag) => tag.trim());
+      if (Array.isArray(updatedFields.tags)) {
+        updatedFields.tags = updatedFields.tags.map((tag) => tag.trim());
+      }
     }
 
     // Convert sharedWith to ObjectIds if changed
     if (updatedFields.sharedWith) {
-      updatedFields.sharedWith = updatedFields.sharedWith
-        .map((email: string) => {
+      updatedFields.sharedWith = (updatedFields.sharedWith as string[])
+        ?.map((email: string) => {
           const user = recipients.find((r) => r.email === email);
           return user ? user._id : undefined;
         })
