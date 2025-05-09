@@ -6,7 +6,7 @@ export interface IReport {
   title: string;
   uploadedBy: Types.ObjectId;
   sharedWith: Types.ObjectId[];
-  fileUrl: string;                // Direct file URL from ImageKit
+  fileUrl?: string;                // Direct file URL from ImageKit
   fileType?: string;             // Optional: 'pdf', 'docx', 'xlsx', etc.
   fileSize?: number;             // In bytes
   imageKitFileId?: string;       // To enable future deletion or signed access

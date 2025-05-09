@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useNotification } from "@/app/components/Notification"
 import Link from "next/link";
-import Lightning from "../components/lightning";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -48,15 +47,6 @@ export default function Register() {
   return (
     <div className="flex items-center justify-center ">
 
-<div className="absolute top-0 left-0 w-full h-full overflow-hidden"> 
-         <Lightning
-    hue={1}
-    xOffset={0}
-    speed={1}
-    intensity={1}
-    size={1}
-  />
-        </div>
       
     <div className="relative mt-16 max-w-md w-full p-8 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
       {/* Subtle animated background glow */}

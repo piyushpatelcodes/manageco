@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useNotification } from "../components/Notification";
 import Link from "next/link";
-import Lightning from "../components/lightning";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -31,15 +30,7 @@ export default function Login() {
 
   return (
    <div className=" flex items-center justify-center ">
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden"> 
-         <Lightning
-    hue={220}
-    xOffset={0}
-    speed={1}
-    intensity={1}
-    size={1}
-  />
-  </div>
+     
   <div className="relative mt-16 max-w-md w-full p-8 bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
     {/* Subtle animated background glow */}
     <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/20 via-blue-500/20 to-transparent opacity-50 animate-pulse"></div>
