@@ -38,9 +38,7 @@ export default withAuth(
         if (!token) {
           return false;
         }
-        if(token.role === "sales"){
-          return true
-        }
+       
 
         // // Role-based access control
         // if (pathname.startsWith("/superadmindashboard")) {

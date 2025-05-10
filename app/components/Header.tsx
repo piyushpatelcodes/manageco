@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Home, User } from "lucide-react";
 import { useNotification } from "./Notification";
+import tick from "../../public/tick.png"
 
 export default function Header() {
   const { data: session } = useSession();
@@ -58,7 +59,7 @@ export default function Header() {
                       {
                         session.user.role === "superadmin" && (
                           <div className="badge badge-soft badge-info text-white ml-2 flex">
-                            Super Admin<Image src="/tick.png" height={25} width={25} alt="tick" />
+                            Super Admin<Image src={tick} height={25} width={25} alt="tick" />
                           </div>
                         )
 
@@ -67,21 +68,21 @@ export default function Header() {
                       {
                         session.user.role === "admin" && (
                           <div className="badge badge-soft badge-success text-white ml-2 flex">
-                             Admin<Image src="/tick.png" height={25} width={25} alt="tick" />
+                             Admin<Image src={tick} height={25} width={25} alt="tick" />
                           </div>
                         )
                       }
                       {
                         session.user.role === "sales" && (
                           <div className="badge badge-soft badge-primary text-white ml-2 flex">
-                             Sales Person<Image src="/tick.png" height={25} width={25} alt="tick" />
+                             Sales Person<Image src={tick} height={25} width={25} alt="tick" />
                           </div>
                         )
                       }
                       {
                         session.user.role === "labtester" && (
                           <div className="badge badge-soft badge-primary text-white ml-2 flex">
-                             Lab Person<Image src="/tick.png" height={25} width={25} alt="tick" />
+                             Lab Person<Image src={tick} height={25} width={25} alt="tick" />
                           </div>
                         )
                       }
@@ -95,7 +96,7 @@ export default function Header() {
                         href="/upload"
                         className="px-4 py-2 hover:bg-base-200 block w-full"
                         onClick={() =>
-                          showNotification("Welcome to Admin Upload", "info")
+                          showNotification("Welcome to Upload", "info")
                         }
                       >
                         Report Upload
@@ -104,13 +105,13 @@ export default function Header() {
 
                     <li>
                       <Link
-                        href="/dashboard"
+                        href={`/${session?.user.role}/dashboard`}
                         className="px-4 py-2 hover:bg-base-200 block w-full"
                         onClick={() =>
-                          showNotification("Welcome to  Dashboard", "info")
+                          showNotification(`Welcome to ${session?.user.role} Dashboard`, "info")
                         }
                       >
-                        Dashboard
+                        {session?.user.role.toUpperCase()} Dashboard
                       </Link>
                     </li>
 
