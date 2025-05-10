@@ -497,8 +497,9 @@ export default function TaskTable() {
                       </div>
                     </td>
 
-                    <td className="w-[11vw] p-3 gap-2 flex items-center">
+                    <td className="w-[14vw] p-3 gap-2 flex items-center">
                       <span
+                     
                         className={`px-2 py-1 rounded ${
                           task.status === "RejectedByLab"
                             ? "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300"
