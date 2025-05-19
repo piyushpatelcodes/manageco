@@ -31,7 +31,19 @@ candedly automatic meeting schedule, chat/notes system.
 <mark> explore imagekit response values for making a file private and getting all file related details</mark>
 
 ---
+### Stage 1 <mark style="background:#59FE17; padding:10px; border-radius:12px">Approved
+## Project is on Stage 2
 
+1.  add region and test feilds for sales person on upload.
+1. add functionality --  product already exists. show stats if yes.
+1. keep ui mcq type (for tests). no typing
+1. make timeline flow - they love it
+1. research and add msds
+
+1. add finance role - admin on lab approval send data to finance and then finance back to admin - add extra status accordingly.
+
+
+---
 
 /* add the code bellow */ 
 @layer utilities {
@@ -46,3 +58,4 @@ candedly automatic meeting schedule, chat/notes system.
     scrollbar-color: #3f3f3f20  #3f3f3f20;
 }
 }
+

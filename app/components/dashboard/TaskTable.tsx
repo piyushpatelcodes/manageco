@@ -309,15 +309,15 @@ export default function TaskTable() {
           .map((r) => (r.uploadedBy as unknown as IUser)?.email)
           .filter(Boolean);
 
-          return Array.from(new Set(users)).map((email) => ({
-            label: email,
-            value: email,
-          }));
-          
-          case "role":
-            const roles = reports
-            .map((r) => (r.uploadedBy as unknown as IUser)?.role)
-            .filter(Boolean);
+        return Array.from(new Set(users)).map((email) => ({
+          label: email,
+          value: email,
+        }));
+
+      case "role":
+        const roles = reports
+          .map((r) => (r.uploadedBy as unknown as IUser)?.role)
+          .filter(Boolean);
         return Array.from(new Set(roles)).map((role) => ({
           label: role,
           value: role,
@@ -421,7 +421,19 @@ export default function TaskTable() {
                   >
                     <td className="p-3 text-gray-900 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700">
                       {task.title}
+                      {task.similarTo?.length > 0 && (
+                        <span className="relative group">
+                          <p
+                            data-tip={`Similar Products Found: ${task.similarTo?.length}`}
+                            className="text-2xl text-red-600 cursor-help tooltip tooltip-error  "
+                          >
+                            *
+                          </p>
+                         
+                        </span>
+                      )}
                     </td>
+
                     <td className="p-3 w-[21vw] text-gray-700 dark:text-gray-300  border-r border-gray-200 dark:border-gray-700">
                       {(task?.description ?? "").length > 50 ? (
                         <>
@@ -499,7 +511,6 @@ export default function TaskTable() {
 
                     <td className="w-[14vw] p-3 gap-2 flex items-center">
                       <span
-                     
                         className={`px-2 py-1 rounded ${
                           task.status === "RejectedByLab"
                             ? "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300"

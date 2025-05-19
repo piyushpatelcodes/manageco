@@ -69,10 +69,19 @@ export async function GET() {
       .populate("uploadedBy", "email role domain") // Optional: populate uploader
       .populate("sharedWith", "email role") // Optional: populate shared users
       .populate("testResults.uploadedBy", "email role")
+      .populate({
+        path: "similarTo",
+        select:
+          "_id title description tags status fileUrl fileType fileSize createdAt uploadedBy",
+        populate: {
+          path: "uploadedBy",
+          select: "email role",
+        },
+      })
       .sort({ createdAt: -1 })
       .lean();
 
-    console.log("🚀 ~ GET ~ reports:", reports,filter)
+    console.log("🚀 ~ GET ~ reports:", reports, filter);
     return NextResponse.json(reports, { status: 200 });
   } catch (error) {
     console.error("Error fetching reports:", error);
@@ -93,13 +102,13 @@ export async function POST(request: NextRequest) {
 
     await connectToDatabase();
     const body: IReport = await request.json();
-    console.log("🚀 ~ POST ~ body:", body)
+    console.log("🚀 ~ POST ~ body:", body);
 
     // Validate required fields
     if (!body) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }, 
+        { status: 400 }
       );
     }
 

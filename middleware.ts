@@ -5,7 +5,7 @@ const roleAccessMap: Record<string, string[]> = {
   superadmin: ["/superadmindashboard", "/upload"],
   admin: ["/upload", "/admin", ],
   labtester: ["/labtester","/upload" ],
-  sales: ["/sales","/upload"],
+  sales: ["/sales","/upload", "/api"],
 };
 
 export default withAuth(

@@ -13,7 +13,7 @@ export default async function Sidebar() {
     
   // ];
   const menuItems = [
-    { name: "All Projects Lists", active: true, url:"/dashboard" },
+    { name: "All Projects Lists", active: true, url:`/${currentUser.role}/dashboard` },
     { name: "Kanban Board",url:`/${currentUser.role}/dashboard/kanban` },
     { name: "Timeline", url:`/${currentUser.role}/dashboard/timeline`},
     

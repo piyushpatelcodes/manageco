@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { IUser } from "@/models/User";
 import { useRouter } from "next/navigation";
-import { TagIcon } from "lucide-react";
+import { AlertTriangleIcon, Tag, TagIcon } from "lucide-react";
+import { IReport } from "@/models/Report";
 
 export default function ReportViewPage() {
   interface Report {
@@ -12,6 +13,7 @@ export default function ReportViewPage() {
     sharedWith?: (IUser | string)[];
     status?: string;
     tags?: string[];
+    similarTo?: IReport[];
     fileUrl?: string;
     fileType?: string;
     fileSize?: number;
@@ -35,6 +37,7 @@ export default function ReportViewPage() {
     }
 
     const parsed = JSON.parse(stored);
+    console.log("🚀 ~ useEffect ~ parsed:", parsed);
     setReport(parsed);
   }, [router]);
 
@@ -52,6 +55,7 @@ export default function ReportViewPage() {
     fileType,
     fileSize,
     testResults = [],
+    similarTo = [],
   } = report;
 
   const handleDownload = async (url: string) => {
@@ -254,6 +258,75 @@ export default function ReportViewPage() {
         ) : (
           <em className="text-gray-500">No file uploaded</em>
         )}
+        {/* Similar Reports Section */}
+        {similarTo.length > 0 ? (
+          <div className="space-y-4 border-t-4  border-gray-600  ">
+            <p className="items-center justify-center flex gap-2  hover:text-yellow-500 transition-colors duration-500 text-lg font-bold text-white bg-amber-600 p-2 rounded-md mt-5">
+              <AlertTriangleIcon className="animate-bounce" /> SIMILAR REPORTS
+              FOUND
+            </p>
+            {similarTo.map((report, index) => (
+              <div
+                key={index}
+                className="space-y-3 border-b border-gray-600 pb-4"
+              >
+                <h3 className="text-xl font-semibold">{`Similar Report ${
+                  index + 1
+                }`}</h3>
+                <p className="text-lg flex flex-wrap gap-2 font-bold bg-base-200 p-2 rounded-lg">
+                  Title: {report.title}
+                  {report.tags && (
+                    <span className="flex flex-wrap gap-2 opacity-55 hover:opacity-90 transition-opacity duration-500">
+                      {report.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-extralight flex gap-2 items-center"
+                        >
+                          <Tag size={15} /> {tag}
+                        </span>
+                      ))}
+                    </span>
+                  )}
+                </p>
+                {description ? (
+                  <div className="collapse collapse-arrow text-black bg-gray-200  dark:text-white dark:bg-base-300/40">
+                    <input type="checkbox" />
+                    <div className="collapse-title text-md font-medium">
+                      Description
+                    </div>
+                    <div className="collapse-content">
+                      <p className="text-sm">
+                        {report?.description || "No description provided."}
+                      </p>
+                      <p className="text-xs mt-5 italic border-gray-500 border-t-2 pt-2">
+                        Uploaded At:{" "}
+                        {report.createdAt
+                          ? new Date(report.createdAt).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            })
+                          : "N/A"}
+                      </p>
+                      <p className="text-xs flex gap-2 mt-1 italic">
+                        Uploaded By: {(report.uploadedBy as unknown as IUser)?.email}
+                        <span className="bg-purple-500/40 px-1 rounded-md">{(report.uploadedBy as unknown as IUser)?.role} Person</span>
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <em className="text-gray-500">No Descriptin Provided</em>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <em className="text-gray-500">No similar reports found</em>
+        )}
+
         {/* Test Results Section */}
         {testResults.length > 0 ? (
           <div className="space-y-4 border-t-4  border-gray-600">
